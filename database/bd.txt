@@ -1,0 +1,102 @@
+
+-- Tabla de usuarios (Administradores, Médicos, Pacientes)
+CREATE TABLE users (
+    user_id SERIAL PRIMARY KEY,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role VARCHAR(20) CHECK (role IN ('admin', 'doctor', 'patient')) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de especialidades médicas
+CREATE TABLE specialties (
+    specialty_id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de médicos
+CREATE TABLE doctors (
+    doctor_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id),
+    specialty_id INT REFERENCES specialties(specialty_id),
+    license_number VARCHAR(50) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de horarios de atención
+CREATE TABLE schedules (
+    schedule_id SERIAL PRIMARY KEY,
+    doctor_id INT REFERENCES doctors(doctor_id),
+    day_of_week VARCHAR(10) NOT NULL,
+    start_time TIME NOT NULL,
+    end_time TIME NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de pacientes
+CREATE TABLE patients (
+    patient_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id),
+    insurance_number VARCHAR(50) UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de fichas de atención
+CREATE TABLE appointments (
+    appointment_id SERIAL PRIMARY KEY,
+    patient_id INT REFERENCES patients(patient_id),
+    doctor_id INT REFERENCES doctors(doctor_id),
+    appointment_date DATE NOT NULL,
+    status VARCHAR(20) CHECK (status IN ('scheduled', 'completed', 'cancelled')) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de historias clínicas
+CREATE TABLE medical_records (
+    record_id SERIAL PRIMARY KEY,
+    patient_id INT REFERENCES patients(patient_id),
+    doctor_id INT REFERENCES doctors(doctor_id),
+    appointment_id INT REFERENCES appointments(appointment_id),
+    consultation_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    notes TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de exámenes y análisis
+CREATE TABLE tests (
+    test_id SERIAL PRIMARY KEY,
+    record_id INT REFERENCES medical_records(record_id),
+    test_type VARCHAR(100) NOT NULL,
+    result TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de recetas/tratamientos
+CREATE TABLE prescriptions (
+    prescription_id SERIAL PRIMARY KEY,
+    record_id INT REFERENCES medical_records(record_id),
+    medication VARCHAR(100) NOT NULL,
+    dosage VARCHAR(100) NOT NULL,
+    instructions TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Tabla de reportes
+CREATE TABLE reports (
+    report_id SERIAL PRIMARY KEY,
+    report_type VARCHAR(100) NOT NULL,
+    generated_by INT REFERENCES users(user_id),
+    generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    data JSONB
+);
