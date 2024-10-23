@@ -1,4 +1,3 @@
-
 -- Tabla de usuarios (Administradores, Médicos, Pacientes)
 CREATE TABLE users (
     user_id SERIAL PRIMARY KEY,
@@ -8,6 +7,9 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- Índices
+CREATE INDEX idx_users_username ON users(username);
+CREATE INDEX idx_users_role ON users(role);
 
 -- Tabla de especialidades médicas
 CREATE TABLE specialties (
@@ -27,6 +29,9 @@ CREATE TABLE doctors (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- Índices
+CREATE INDEX idx_doctors_user_id ON doctors(user_id);
+CREATE INDEX idx_doctors_specialty_id ON doctors(specialty_id);
 
 -- Tabla de horarios de atención
 CREATE TABLE schedules (
@@ -38,6 +43,8 @@ CREATE TABLE schedules (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- Índices
+CREATE INDEX idx_schedules_doctor_id ON schedules(doctor_id);
 
 -- Tabla de pacientes
 CREATE TABLE patients (
@@ -47,8 +54,10 @@ CREATE TABLE patients (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- Índices
+CREATE INDEX idx_patients_user_id ON patients(user_id);
 
--- Tabla de fichas de atención
+-- Tabla de citas médicas
 CREATE TABLE appointments (
     appointment_id SERIAL PRIMARY KEY,
     patient_id INT REFERENCES patients(patient_id),
@@ -58,6 +67,10 @@ CREATE TABLE appointments (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- Índices
+CREATE INDEX idx_appointments_patient_id ON appointments(patient_id);
+CREATE INDEX idx_appointments_doctor_id ON appointments(doctor_id);
+CREATE INDEX idx_appointments_date ON appointments(appointment_date);
 
 -- Tabla de historias clínicas
 CREATE TABLE medical_records (
@@ -70,6 +83,10 @@ CREATE TABLE medical_records (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- Índices
+CREATE INDEX idx_medical_records_patient_id ON medical_records(patient_id);
+CREATE INDEX idx_medical_records_doctor_id ON medical_records(doctor_id);
+CREATE INDEX idx_medical_records_appointment_id ON medical_records(appointment_id);
 
 -- Tabla de exámenes y análisis
 CREATE TABLE tests (
@@ -80,6 +97,9 @@ CREATE TABLE tests (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- Índices
+CREATE INDEX idx_tests_record_id ON tests(record_id);
+CREATE INDEX idx_tests_test_type ON tests(test_type);
 
 -- Tabla de recetas/tratamientos
 CREATE TABLE prescriptions (
@@ -91,6 +111,9 @@ CREATE TABLE prescriptions (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+-- Índices
+CREATE INDEX idx_prescriptions_record_id ON prescriptions(record_id);
+CREATE INDEX idx_prescriptions_medication ON prescriptions(medication);
 
 -- Tabla de reportes
 CREATE TABLE reports (
@@ -100,3 +123,6 @@ CREATE TABLE reports (
     generated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     data JSONB
 );
+-- Índices
+CREATE INDEX idx_reports_generated_by ON reports(generated_by);
+CREATE INDEX idx_reports_report_type ON reports(report_type);
