@@ -126,3 +126,52 @@ CREATE TABLE reports (
 -- Índices
 CREATE INDEX idx_reports_generated_by ON reports(generated_by);
 CREATE INDEX idx_reports_report_type ON reports(report_type);
+
+INSERT INTO users (username, password, role) VALUES
+('admin1', 'hashed_password_1', 'admin'),
+('doctor1', 'hashed_password_2', 'doctor'),
+('doctor2', 'hashed_password_3', 'doctor'),
+('patient1', 'hashed_password_4', 'patient'),
+('patient2', 'hashed_password_5', 'patient');
+
+INSERT INTO specialties (name, description) VALUES
+('Cardiología', 'Especialista en enfermedades del corazón'),
+('Dermatología', 'Especialista en enfermedades de la piel'),
+('Pediatría', 'Especialista en salud infantil');
+
+INSERT INTO doctors (user_id, specialty_id, license_number) VALUES
+(2, 1, '12345'),
+(3, 2, '67890');
+
+
+INSERT INTO schedules (doctor_id, day_of_week, start_time, end_time) VALUES
+(1, 'Lunes', '09:00', '13:00'),
+(1, 'Martes', '14:00', '18:00'),
+(2, 'Miércoles', '09:00', '13:00'),
+(2, 'Jueves', '14:00', '18:00');
+
+INSERT INTO patients (user_id, insurance_number) VALUES
+(4, 'INS-1234'),
+(5, 'INS-5678');
+
+INSERT INTO appointments (patient_id, doctor_id, appointment_date, status) VALUES
+(1, 1, '2024-11-10', 'scheduled'),
+(2, 2, '2024-11-11', 'completed');
+
+INSERT INTO medical_records (patient_id, doctor_id, appointment_id, notes) VALUES
+(1, 1, 1, 'Paciente presenta síntomas de dolor torácico.'),
+(2, 2, 2, 'Paciente completó la consulta sin complicaciones.');
+
+INSERT INTO tests (record_id, test_type, result) VALUES
+(1, 'Electrocardiograma', 'Resultados normales'),
+(2, 'Biopsia de piel', 'Resultados negativos para cáncer de piel');
+
+INSERT INTO prescriptions (record_id, medication, dosage, instructions) VALUES
+(1, 'Aspirina', '500 mg', 'Tomar una tableta cada 8 horas'),
+(2, 'Crema antibiótica', 'Aplicar dos veces al día', 'Aplicar en la zona afectada');
+
+INSERT INTO reports (report_type, generated_by, data) VALUES
+('Informe mensual', 1, '{"consultas_totales": 150, "consultas_completadas": 145, "cancelaciones": 5}'),
+('Reporte de especialidades', 1, '{"cardiologia": 50, "dermatologia": 30, "pediatria": 70}');
+
+
